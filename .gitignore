@@ -1,0 +1,18 @@
+# Compilados Java
+**/target/
+# node
+**/node_modules/
+**/dist/
+# IDE
+.idea/
+*.iml
+.vscode/
+# Variables y secretos locales
+.env
+.env.*.local
+# Test artifacts
+*.log
+__pycache__/
+# macOS / Windows
+.DS_Store
+Thumbs.db
