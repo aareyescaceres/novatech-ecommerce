@@ -1,0 +1,15 @@
+server:
+  port: 8081
+  address: 127.0.0.1   # El microservicio no queda expuesto a Internet
+spring:
+  application:
+    name: novatech-reports
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5433/novatech}
+    username: ${DB_USER:novatech}
+    password: ${DB_PASSWORD:novatech_dev}
+    hikari:
+      read-only: true
+      maximum-pool-size: 3
+reports:
+  internal-token: ${REPORTS_INTERNAL_TOKEN:novatech-dev-reports-only-token-change-before-deployment}

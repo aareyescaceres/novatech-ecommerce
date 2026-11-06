@@ -1,13 +1,11 @@
-package com.novatech.backoffice;
+package com.novatech.reports;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BackofficeServiceApplication {
-
+public class ReportsApplication {
     public static void main(String[] args) {
-        SpringApplication.run(BackofficeServiceApplication.class, args);
+        SpringApplication.run(ReportsApplication.class, args);
     }
-
 }

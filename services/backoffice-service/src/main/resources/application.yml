@@ -1,0 +1,16 @@
+server:
+  port: 8082
+  address: 127.0.0.1  # Solo desarrollo local; no exponer sin controles adicionales.
+spring:
+  application:
+    name: novatech-backoffice
+app:
+  jwt:
+    secret: ${JWT_SECRET:CAMBIAR_esta_clave_DEMO_64_caracteres_minimo_12345678901234567890}
+  cors-origin: ${BACKOFFICE_CORS_ORIGIN:http://localhost:5174}
+commerce:
+  base-url: ${COMMERCE_URL:http://127.0.0.1:8080}
+  internal-token: ${COMMERCE_INTERNAL_TOKEN:novatech-local-commerce-token-CHANGE-ME-2026}
+reports:
+  base-url: ${REPORTS_URL:http://127.0.0.1:8081}
+  internal-token: ${REPORTS_INTERNAL_TOKEN:novatech-dev-reports-only-token-change-before-deployment}
