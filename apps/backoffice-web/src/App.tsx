@@ -1,122 +1,50 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { Link, NavLink, Navigate, Route, Routes } from 'react-router-dom';
+import { useAuth } from './auth';
+import DashboardPage from './pages/DashboardPage';
+import LoginPage from './pages/LoginPage';
+import ProductsPage from './pages/ProductsPage';
+import OrdersPage from './pages/OrdersPage';
+import ReportsPage from './pages/ReportsPage';
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
+export default function App() {
+  const {session, logout} = useAuth();
+  if (!session) return <Routes>
+    <Route path="/login" element={<LoginPage/>}/>
+    <Route path="*" element={<Navigate to="/login" replace/>}/>
+  </Routes>;
+  const sales = session.role === 'ADMIN' || session.role === 'SALES_STAFF';
+  const inventory = session.role === 'ADMIN' || session.role === 'INVENTORY_MANAGER';
+  return <div className="workspace">
+    <aside className="sidebar">
+      <Link to="/" className="brand"><span className="brand-mark">N</span>
+        <span>Nova<span className="brand-accent">Tech</span><small>BACKOFFICE</small></span>
+      </Link>
+      <div className="sidebar-heading">OPERACIONES</div>
+      <nav className="sidebar-nav">
+        <NavLink end to="/" className={({isActive}) => isActive ? 'active' : ''}>◫ <span>Resumen</span></NavLink>
+        <NavLink to="/products" className={({isActive}) => isActive ? 'active' : ''}>▦ <span>Productos e inventario</span></NavLink>
+        {sales && <NavLink to="/orders" className={({isActive}) => isActive ? 'active' : ''}>▤ <span>Pedidos y devoluciones</span></NavLink>}
+        {sales && <NavLink to="/reports" className={({isActive}) => isActive ? 'active' : ''}>▥ <span>Reportes</span></NavLink>}
+      </nav>
+      <div className="sidebar-foot"><div className="env-chip">ENTORNO DE DESARROLLO</div><p>Operaciones y pagos simulados. No es una plataforma productiva.</p></div>
+    </aside>
+    <div className="main-area">
+      <header className="top-header"><div><span className="eyebrow">NOVA / OPERACIONES</span><strong>Centro de administración</strong></div>
+        <div className="profile"><div className="profile-avatar">{session.email.charAt(0).toUpperCase()}</div>
+          <div className="profile-name"><strong>{session.email}</strong><small>{session.role === 'ADMIN' ? 'Administración' : session.role === 'SALES_STAFF' ? 'Personal de ventas' : 'Gestión de inventario'}</small></div>
+          <button className="button subtle" onClick={logout}>Salir</button>
         </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      </header>
+      <main className="content">
+        <Routes>
+          <Route path="/" element={<DashboardPage/>}/>
+          <Route path="/products" element={<ProductsPage canEdit={inventory}/>}/>
+          <Route path="/orders" element={sales ? <OrdersPage/> : <Navigate to="/" replace/>}/>
+          <Route path="/reports" element={sales ? <ReportsPage/> : <Navigate to="/" replace/>}/>
+          <Route path="/login" element={<Navigate to="/" replace/>}/>
+          <Route path="*" element={<Navigate to="/" replace/>}/>
+        </Routes>
+      </main>
+    </div>
+  </div>;
 }
-
-export default App
